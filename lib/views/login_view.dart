@@ -1,8 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-import '../firebase_options.dart';
 
 class LogInView extends StatefulWidget {
   const LogInView({super.key});
@@ -32,59 +29,51 @@ class _LogInViewState extends State<LogInView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Log In View"),
-      ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  TextField(
-                    controller: _email,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(hintText: "Enter your email"),
-                  ),
-                  TextField(
-                    controller: _password,
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration:
-                        InputDecoration(hintText: "Enter your password"),
-                  ),
-                  TextButton(
-                      onPressed: () async {
-                        print("login button pressed");
-                        final email = _email.text;
-                        final password = _password.text;
-                        try {
-                          final userCredential = await FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: email, password: password);
-                          print(userCredential);
-                        } on FirebaseAuthException catch (e) {
-                          //          print(e.code);
-                          if (e.code == "invalid-credential") {
-                            print("user info issue");
-                          }
-                        } catch (e) {
-                          print("something bas happened");
-                          print(e.runtimeType);
-                        }
-                      },
-                      child: const Text("LogIn")),
-                ],
-              );
-            default:
-              return Text("Loading");
-          }
-        },
+      appBar: AppBar(title: const Text("LogIn View")),
+      body: Column(
+        children: [
+          TextField(
+            controller: _email,
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(hintText: "Enter your email"),
+          ),
+          TextField(
+            controller: _password,
+            obscureText: true,
+            enableSuggestions: false,
+            autocorrect: false,
+            decoration: InputDecoration(hintText: "Enter your password"),
+          ),
+          TextButton(
+              onPressed: () async {
+                print("login button pressed");
+                final email = _email.text;
+                final password = _password.text;
+                try {
+                  final userCredential = await FirebaseAuth.instance
+                      .signInWithEmailAndPassword(
+                          email: email, password: password);
+                  print(userCredential);
+                } on FirebaseAuthException catch (e) {
+                  //          print(e.code);
+                  if (e.code == "invalid-credential") {
+                    print("user info issue");
+                  }
+                } catch (e) {
+                  print("something bas happened");
+                  print(e.runtimeType);
+                }
+              },
+              child: const Text("LogIn")),
+          TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/register/', (route) => false);
+              },
+              child: const Text("Register here")),
+        ],
       ),
     );
   }
