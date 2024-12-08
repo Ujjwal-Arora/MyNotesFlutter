@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "885967894381",
+    "project_id": "mynotes-flutter-ujjwal",
+    "storage_bucket": "mynotes-flutter-ujjwal.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:885967894381:android:2a67fc064eada1491c4c64",
+        "android_client_info": {
+          "package_name": "com.ujjwal.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYKM8yZIfFI3-eTtEN6-uomo_gnBvu_xk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
