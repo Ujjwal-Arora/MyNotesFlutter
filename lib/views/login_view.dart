@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import "dart:developer" as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class LogInView extends StatefulWidget {
   const LogInView({super.key});
@@ -64,11 +65,12 @@ class _LogInViewState extends State<LogInView> {
                 } on FirebaseAuthException catch (e) {
                   //          print(e.code);
                   if (e.code == "invalid-credential") {
-                    devtools.log("user info issue");
+                    await showErrorDialog(context, "Wrong credentials");
+                  } else {
+                    await showErrorDialog(context, "Error : ${e.code}");
                   }
                 } catch (e) {
-                  devtools.log("something bas happened");
-                  devtools.log(e.runtimeType.toString());
+                  await showErrorDialog(context, e.toString());
                 }
               },
               child: const Text("LogIn")),
