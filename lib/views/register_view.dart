@@ -5,6 +5,8 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/firebase_options.dart';
 import "dart:developer" as devtools show log;
 
+import 'package:mynotes/utilities/show_error_dialog.dart';
+
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
 
@@ -57,24 +59,32 @@ class _RegisterViewState extends State<RegisterView> {
                 final email = _email.text;
                 final password = _password.text;
                 try {
-                  final userCredential = await FirebaseAuth.instance
-                      .createUserWithEmailAndPassword(
-                          email: email, password: password);
-                  devtools.log(userCredential.toString());
+                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: email, password: password);
+                  final user = FirebaseAuth.instance.currentUser;
+                  await user?.sendEmailVerification();
+                  Navigator.of(context).pushNamed(verifyEmailRoute);
                 } on FirebaseAuthException catch (e) {
                   devtools.log(e.code);
                   if (e.code == "weak-password") {
+                    await showErrorDialog(context, "Weak password");
                     devtools.log("make it stronger my boayyy");
                   } else if (e.code == "email-already-in-use") {
+                    await showErrorDialog(context, "email-already-in-use");
                     devtools.log("change your email my buayyy");
                   } else if (e.code == "invalid-email") {
+                    await showErrorDialog(context, "invalid-email");
+
                     devtools.log("invalid email h bete");
                   } else {
+                    await showErrorDialog(context, "error ${e.code} ");
                     devtools.log(e.code.toString());
                   }
+                } catch (e) {
+                  await showErrorDialog(context, "error ${e.toString()} ");
                 }
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(notesRoute, (route) => false);
+                // Navigator.of(context)
+                //     .pushNamedAndRemoveUntil(notesRoute, (route) => false);
               },
               child: const Text("Register")),
           TextButton(
