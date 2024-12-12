@@ -1,8 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/firebase_options.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import "dart:developer" as devtools show log;
 
 import 'package:mynotes/utilities/show_error_dialog.dart';
@@ -59,30 +61,21 @@ class _RegisterViewState extends State<RegisterView> {
                 final email = _email.text;
                 final password = _password.text;
                 try {
-                  await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                      email: email, password: password);
-                  final user = FirebaseAuth.instance.currentUser;
-                  await user?.sendEmailVerification();
+                  await AuthService.firebase()
+                      .createUser(email: email, password: password);
+                  final user = AuthService.firebase().currentUser;
+                  await AuthService.firebase().sendEmailVerification();
                   Navigator.of(context).pushNamed(verifyEmailRoute);
-                } on FirebaseAuthException catch (e) {
-                  devtools.log(e.code);
-                  if (e.code == "weak-password") {
-                    await showErrorDialog(context, "Weak password");
-                    devtools.log("make it stronger my boayyy");
-                  } else if (e.code == "email-already-in-use") {
-                    await showErrorDialog(context, "email-already-in-use");
-                    devtools.log("change your email my buayyy");
-                  } else if (e.code == "invalid-email") {
-                    await showErrorDialog(context, "invalid-email");
-
-                    devtools.log("invalid email h bete");
-                  } else {
-                    await showErrorDialog(context, "error ${e.code} ");
-                    devtools.log(e.code.toString());
-                  }
-                } catch (e) {
-                  await showErrorDialog(context, "error ${e.toString()} ");
+                } on WeakPasswordAuthException {
+                  await showErrorDialog(context, "Weak password");
+                } on EmailAlreadyInUseException {
+                  await showErrorDialog(context, "email-already-in-use");
+                } on InvalidEmailAuthExcaption {
+                  await showErrorDialog(context, "invalid-email");
+                } on GenericAuthException {
+                  await showErrorDialog(context, "failed to register");
                 }
+
                 // Navigator.of(context)
                 //     .pushNamedAndRemoveUntil(notesRoute, (route) => false);
               },
