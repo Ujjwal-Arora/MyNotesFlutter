@@ -28,7 +28,7 @@ void main() {
 
     test('create user should delegate to login function', () async {
       final badEmailUser =
-          provider.createUser(email: 'foo@bar.com', password: 'anypassword');
+          provider.createUser(email: 'q@gmail.com', password: 'qqqqqq');
       expect(badEmailUser, throwsA(const TypeMatcher<UserNotFoundException>()));
 
       final badpasswordUser =
@@ -38,6 +38,18 @@ void main() {
       final user = await provider.createUser(email: 'foo', password: 'bar');
       expect(provider.currentUser, user);
       expect(user.isEmailVerified, false);
+    });
+    test('login user to be verifiec', () {
+      provider.sendEmailVerification();
+      final user = provider.currentUser;
+      expect(user, isNotNull);
+      expect(user!.isEmailVerified, true);
+    });
+    test('should be able to log out and log in again', () async {
+      await provider.logOut();
+      await provider.logIn(email: 'email', password: 'password');
+      final user = provider.currentUser;
+      expect(user, isNotNull);
     });
   });
 }
